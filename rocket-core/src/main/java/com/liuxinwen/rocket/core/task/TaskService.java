@@ -11,7 +11,7 @@ public interface TaskService<T> {
     /**
      * 根据参数T执行task
      *
-     * @param t
+     * @param t 实际业务执行传入的参数
      */
     void execTask(T t);
 

@@ -24,6 +24,9 @@ public class MessageTaskService implements TaskService<Message> {
     @SneakyThrows(InterruptedException.class)
     public void execTask(Message message) {
         TimeUnit.MICROSECONDS.sleep(new Random().nextInt(1000));
+        /**
+         * 调用具体业务处理service
+         */
         this.messageService.send(message);
     }
 }

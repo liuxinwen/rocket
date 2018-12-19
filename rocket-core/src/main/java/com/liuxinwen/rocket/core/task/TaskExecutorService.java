@@ -1,11 +1,14 @@
 package com.liuxinwen.rocket.core.task;
 
+import com.google.common.base.Verify;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -39,10 +42,27 @@ public class TaskExecutorService {
      * @param taskName    task名称，无特殊意义，仅仅为了在执行task抛出异常后记录日志使用，建议传入一个有意义的值
      * @param taskService {@link TaskService}
      * @param dataList    待执行任务列表
-     * @param <T>
+     * @param <T>         dataList集合中的对象
      */
     public <T> void executeTask(String taskName, TaskService<T> taskService, List<T> dataList) {
-        executeTask(taskName, taskService, dataList, DEFAULT_TASK_THREAD_NUM);
+        Verify.verifyNotNull(taskService);
+        Verify.verifyNotNull(dataList);
+        executeTask(taskName, taskService, new CommonExecutor<T>(), dataList);
+    }
+
+    /**
+     * 使用默认配置执行task
+     *
+     * @param taskName    task名称，无特殊意义，仅仅为了在执行task抛出异常后记录日志使用，建议传入一个有意义的值
+     * @param taskService {@link TaskService}
+     * @param executor    执行器实现类，如果不传使用默认实现
+     * @param dataList    待执行任务列表
+     * @param <T>         dataList集合中的对象
+     */
+    public <T> void executeTask(String taskName, TaskService<T> taskService, Executor<T> executor, List<T> dataList) {
+        Verify.verifyNotNull(taskService);
+        Verify.verifyNotNull(dataList);
+        executeTask(taskName, taskService, dataList, Objects.isNull(executor) ? new CommonExecutor<>() : executor, threadPoolExecutorFactoryBean.getObject(), DEFAULT_TASK_THREAD_NUM);
     }
 
     /**
@@ -51,10 +71,12 @@ public class TaskExecutorService {
      * @param taskName      task名称，无特殊意义，仅仅为了在执行task抛出异常后记录日志使用，建议传入一个有意义的值
      * @param taskService   {@link TaskService}
      * @param dataList      待执行任务列表
-     * @param taskThreadNum 执行task的线程数 默认为5个
-     * @param <T>
+     * @param taskThreadNum 执行task的线程数 默认为可用cpu核数的2倍+1
+     * @param <T>           dataList集合中的对象
      */
     public <T> void executeTask(String taskName, TaskService<T> taskService, List<T> dataList, int taskThreadNum) {
+        Verify.verifyNotNull(taskService);
+        Verify.verifyNotNull(dataList);
         executeTask(taskName, taskService, dataList, new CommonExecutor<T>(), threadPoolExecutorFactoryBean.getObject(), taskThreadNum);
     }
 
@@ -67,7 +89,7 @@ public class TaskExecutorService {
      * @param taskExecutor    task执行器
      * @param executorService {@link ExecutorService}
      * @param num             执行task的线程数量
-     * @param <T>             待执行任务对象
+     * @param <T>             dataList集合中的对象
      */
     private <T> void executeTask(String taskName, TaskService<T> taskService, List<T> dataList,
                                  Executor<T> taskExecutor, ExecutorService executorService, int num) {
@@ -132,5 +154,9 @@ public class TaskExecutorService {
                 countDownLatch.countDown();
             }
         }
+    }
+
+    private class CommonExecutor<T> implements Executor<T> {
+
     }
 }

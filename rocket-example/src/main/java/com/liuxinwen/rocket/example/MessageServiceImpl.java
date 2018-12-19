@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 public class MessageServiceImpl implements MessageService {
     @Override
     public void send(Message message) {
+        /**
+         * 模拟发送消息的业务处理操作
+         */
         log.info("send message:" + message);
     }
 }

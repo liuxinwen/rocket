@@ -9,4 +9,5 @@
 
     <!-- 扫描包路径 -->
     <context:component-scan base-package="com.liuxinwen.rocket.*"/>
+    <context:property-placeholder location="classpath*:conf/*.properties" />
 </beans>

@@ -1,4 +1,4 @@
-package com.liuxinwen.rocket.core;
+package com.liuxinwen.rocket.core.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +88,7 @@ public class TaskExecutorService {
         }
         CountDownLatch countDownLatch = new CountDownLatch(num);
         for (int i = 1; i <= num; i++) {
-            Task<T> task = new Task<>(taskList + "_TaskThread_" + i, countDownLatch, taskService,
+            Task<T> task = new Task<>(taskName + "_Task_" + i, countDownLatch, taskService,
                     taskExecutor, taskList);
             executorService.execute(task);
         }

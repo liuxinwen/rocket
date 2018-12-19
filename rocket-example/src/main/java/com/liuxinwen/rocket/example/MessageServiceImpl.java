@@ -1,5 +1,6 @@
 package com.liuxinwen.rocket.example;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -7,9 +8,10 @@ import org.springframework.stereotype.Service;
  * @date 2018/12/1718:07
  */
 @Service
+@Slf4j
 public class MessageServiceImpl implements MessageService {
     @Override
     public void send(Message message) {
-        System.out.println("send message:" + message);
+        log.info("send message:" + message);
     }
 }

@@ -1,4 +1,4 @@
-package com.liuxinwen.rocket.core;
+package com.liuxinwen.rocket.core.task;
 
 /**
  * 任务执行服务接口，子类实现此接口执行具体的业务逻辑

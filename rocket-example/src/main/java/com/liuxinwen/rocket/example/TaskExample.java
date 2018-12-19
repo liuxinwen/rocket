@@ -1,6 +1,6 @@
 package com.liuxinwen.rocket.example;
 
-import com.liuxinwen.rocket.core.TaskExecutorService;
+import com.liuxinwen.rocket.core.task.TaskExecutorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,8 +23,9 @@ public class TaskExample {
 
     @Scheduled(cron = "0/5 * * * * ?")
     void send() {
-        List<Message> messages = new ArrayList<>(100);
-        for (int i = 1; i <= 100; i++) {
+        int size = 100000;
+        List<Message> messages = new ArrayList<>(size);
+        for (int i = 1; i <= size; i++) {
             messages.add(Message.builder().id(i).body("message " + i).build());
         }
         this.taskExecutorService.executeTask("sendMessageTask", messageTaskService, messages);

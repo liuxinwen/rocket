@@ -1,4 +1,4 @@
-package com.liuxinwen.rocket.core;
+package com.liuxinwen.rocket.core.task;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,6 +19,9 @@ class CommonExecutor<T> implements Executor<T> {
             try {
                 t = blockingQueue.poll();
                 if (t != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(threadName + " taskService: {} execTask parameter: {}", taskService.getClass().getName(), t);
+                    }
                     taskService.execTask(t);
                 }
             } catch (Exception e) {
